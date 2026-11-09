@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>FoodRescue Admin Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7f6;
+            color: #333;
+        }
+
+        header {
+            background: #198754;
+            color: white;
+            padding: 18px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 24px;
+        }
+
+        header button {
+            background: white;
+            color: #198754;
+            border: none;
+
+            padding: 10px 18px;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+
+            margin: 30px auto;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            margin-bottom: 5px;
+        }
+
+        .cards {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(200px, 1fr));
+
+            gap: 20px;
+
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 3px 10px
+                rgba(0, 0, 0, 0.08);
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+
+            color: #198754;
+        }
+
+        .card .number {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .section {
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            margin-bottom: 30px;
+
+            box-shadow:
+                0 3px 10px
+                rgba(0, 0, 0, 0.08);
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+
+            border-bottom:
+                1px solid #ddd;
+
+            text-align: left;
+        }
+
+        th {
+            background: #e9f7ef;
+        }
+
+        button.action {
+            border: none;
+
+            padding: 8px 12px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+
+            color: white;
+        }
+
+        .verify {
+            background: #198754;
+        }
+
+        .unverify {
+            background: #dc3545;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .verified {
+            color: #198754;
+        }
+
+        .not-verified {
+            color: #dc3545;
+        }
+
+        .message {
+            margin-bottom: 15px;
+
+            padding: 12px;
+
+            border-radius: 5px;
+
+            display: none;
+        }
+
+        .success {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        @media (max-width: 700px) {
+
+            table {
+                font-size: 13px;
+            }
+
+            th,
+            td {
+                padding: 8px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>
+        FoodRescue Admin
+    </h1>
+
+    <button onclick="logout()">
+        Logout
+    </button>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <div class="welcome">
+
+        <h2>
+            Admin Dashboard
+        </h2>
+
+        <p>
+            Manage users and food donations.
+        </p>
+
+    </div>
+
+
+
+    <!-- MESSAGE -->
+
+    <div
+        id="message"
+        class="message">
+    </div>
+
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <h3>
+                Total Users
+            </h3>
+
+            <div
+                id="totalUsers"
+                class="number">
+
+                0
+
+            </div>
+
+        </div>
+
+
+
+        <div class="card">
+
+            <h3>
+                Receivers
+            </h3>
+
+            <div
+                id="totalReceivers"
+                class="number">
+
+                0
+
+            </div>
+
+        </div>
+
+
+
+        <div class="card">
+
+            <h3>
+                Verified
+            </h3>
+
+            <div
+                id="verifiedUsers"
+                class="number">
+
+                0
+
+            </div>
+
+        </div>
+
+
+
+        <div class="card">
+
+            <h3>
+                Donations
+            </h3>
+
+            <div
+                id="totalDonations"
+                class="number">
+
+                0
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- USERS -->
+
+    <div class="section">
+
+        <h2>
+            User Management
+        </h2>
+
+
+        <div style="overflow-x:auto;">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Roles
+                        </th>
+
+                        <th>
+                            Area
+                        </th>
+
+                        <th>
+                            Verified
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="usersTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- DONATIONS -->
+
+    <div class="section">
+
+        <h2>
+            Food Donations
+        </h2>
+
+
+        <div style="overflow-x:auto;">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Food
+                        </th>
+
+                        <th>
+                            Type
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                        <th>
+                            Area
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="donationsTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+// ======================================================
+// API URL
+// ======================================================
+
+const API_URL =
+    "http://127.0.0.1:5000";
+
+
+
+// ======================================================
+// CHECK LOGIN
+// ======================================================
+
+const token =
+    localStorage.getItem("token");
+
+const storedUser =
+    localStorage.getItem("user");
+
+
+if (!token || !storedUser) {
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+
+const user =
+    JSON.parse(storedUser);
+
+
+
+// ======================================================
+// CHECK ADMIN
+// ======================================================
+
+let roles =
+    user.roles || [];
+
+
+if (
+    roles.length === 0 &&
+    user.role
+) {
+
+    roles = [
+        user.role
+    ];
+
+}
+
+
+if (!roles.includes("admin")) {
+
+    alert(
+        "Admin access required"
+    );
+
+    window.location.href =
+        "dashboard.html";
+
+}
+
+
+
+// ======================================================
+// ELEMENTS
+// ======================================================
+
+const usersTable =
+    document.getElementById(
+        "usersTable"
+    );
+
+
+const donationsTable =
+    document.getElementById(
+        "donationsTable"
+    );
+
+
+const messageBox =
+    document.getElementById(
+        "message"
+    );
+
+
+
+// ======================================================
+// SHOW MESSAGE
+// ======================================================
+
+function showMessage(
+    message,
+    type
+) {
+
+    messageBox.textContent =
+        message;
+
+    messageBox.className =
+        "message " + type;
+
+    messageBox.style.display =
+        "block";
+
+
+    setTimeout(() => {
+
+        messageBox.style.display =
+            "none";
+
+    }, 3000);
+
+}
+
+
+
+// ======================================================
+// LOAD USERS
+// ======================================================
+
+async function loadUsers() {
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL +
+                "/api/admin/users",
+                {
+                    method: "GET",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    }
+
+                }
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        console.log(
+            "Users API response:",
+            responseText
+        );
+
+
+        let users;
+
+
+        try {
+
+            users =
+                JSON.parse(
+                    responseText
+                );
+
+        }
+        catch (error) {
+
+            throw new Error(
+                "Invalid response from server while loading users."
+            );
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                users.message ||
+                "Failed to load users"
+            );
+
+        }
+
+
+        usersTable.innerHTML =
+            "";
+
+
+        let receiverCount =
+            0;
+
+
+        let verifiedCount =
+            0;
+
+
+
+        users.forEach(
+            user => {
+
+                let userRoles =
+                    user.roles || [];
+
+
+                // Support old accounts
+
+                if (
+                    userRoles.length === 0 &&
+                    user.role
+                ) {
+
+                    userRoles = [
+                        user.role
+                    ];
+
+                }
+
+
+                if (
+                    userRoles.includes(
+                        "receiver"
+                    )
+                ) {
+
+                    receiverCount++;
+
+                }
+
+
+                if (user.verified) {
+
+                    verifiedCount++;
+
+                }
+
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${user.name || "-"}
+                    </td>
+
+                    <td>
+                        ${user.email || "-"}
+                    </td>
+
+                    <td>
+                        ${userRoles.join(", ")}
+                    </td>
+
+                    <td>
+                        ${user.area || "-"}
+                    </td>
+
+                    <td class="status
+                        ${
+                            user.verified
+                            ? "verified"
+                            : "not-verified"
+                        }">
+
+                        ${
+                            user.verified
+                            ? "Verified"
+                            : "Not Verified"
+                        }
+
+                    </td>
+
+                    <td>
+
+                        ${
+                            user.verified
+
+                            ?
+
+                            `
+                            <button
+                                class="action unverify"
+                                onclick="unverifyUser('${user._id}')">
+
+                                Unverify
+
+                            </button>
+                            `
+
+                            :
+
+                            `
+                            <button
+                                class="action verify"
+                                onclick="verifyUser('${user._id}')">
+
+                                Verify
+
+                            </button>
+                            `
+                        }
+
+                    </td>
+
+                `;
+
+
+                usersTable.appendChild(
+                    row
+                );
+
+            }
+        );
+
+
+        document.getElementById(
+            "totalUsers"
+        ).textContent =
+            users.length;
+
+
+        document.getElementById(
+            "totalReceivers"
+        ).textContent =
+            receiverCount;
+
+
+        document.getElementById(
+            "verifiedUsers"
+        ).textContent =
+            verifiedCount;
+
+    }
+    catch (error) {
+
+        console.error(
+            "Load users error:",
+            error
+        );
+
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+
+// ======================================================
+// VERIFY USER
+// ======================================================
+
+async function verifyUser(
+    userId
+) {
+
+    try {
+
+        const response =
+            await fetch(
+
+                API_URL +
+                `/api/admin/users/${userId}/verify`,
+
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    }
+
+                }
+
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        let result;
+
+
+        try {
+
+            result =
+                JSON.parse(
+                    responseText
+                );
+
+        }
+        catch (error) {
+
+            throw new Error(
+                "Invalid server response."
+            );
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                "Failed to verify user"
+            );
+
+        }
+
+
+        showMessage(
+            "User verified successfully",
+            "success"
+        );
+
+
+        loadUsers();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+
+// ======================================================
+// UNVERIFY USER
+// ======================================================
+
+async function unverifyUser(
+    userId
+) {
+
+    try {
+
+        const response =
+            await fetch(
+
+                API_URL +
+                `/api/admin/users/${userId}/unverify`,
+
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    }
+
+                }
+
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        let result;
+
+
+        try {
+
+            result =
+                JSON.parse(
+                    responseText
+                );
+
+        }
+        catch (error) {
+
+            throw new Error(
+                "Invalid server response."
+            );
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                "Failed to unverify user"
+            );
+
+        }
+
+
+        showMessage(
+            "Verification removed",
+            "success"
+        );
+
+
+        loadUsers();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+
+// ======================================================
+// LOAD DONATIONS
+// ======================================================
+
+async function loadDonations() {
+
+    try {
+
+        const response =
+            await fetch(
+
+                API_URL +
+                "/api/admin/donations",
+
+                {
+
+                    method: "GET",
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    }
+
+                }
+
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        console.log(
+            "Donations API response:",
+            responseText
+        );
+
+
+        let donations;
+
+
+        try {
+
+            donations =
+                JSON.parse(
+                    responseText
+                );
+
+        }
+        catch (error) {
+
+            throw new Error(
+                "Invalid response from server while loading donations."
+            );
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                donations.message ||
+                "Failed to load donations"
+            );
+
+        }
+
+
+        donationsTable.innerHTML =
+            "";
+
+
+        donations.forEach(
+            donation => {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${donation.foodName || "-"}
+                    </td>
+
+                    <td>
+                        ${donation.foodType || "-"}
+                    </td>
+
+                    <td>
+                        ${donation.quantity || 0}
+                    </td>
+
+                    <td>
+                        ${donation.area || "-"}
+                    </td>
+
+                    <td>
+                        ${donation.status || "-"}
+                    </td>
+
+                `;
+
+
+                donationsTable.appendChild(
+                    row
+                );
+
+            }
+        );
+
+
+        document.getElementById(
+            "totalDonations"
+        ).textContent =
+            donations.length;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Load donations error:",
+            error
+        );
+
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+
+// ======================================================
+// LOGOUT
+// ======================================================
+
+function logout() {
+
+    localStorage.removeItem(
+        "token"
+    );
+
+    localStorage.removeItem(
+        "user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+
+// ======================================================
+// LOAD DATA
+// ======================================================
+
+loadUsers();
+
+loadDonations();
+
+
+</script>
+
+
+</body>
+
+</html>

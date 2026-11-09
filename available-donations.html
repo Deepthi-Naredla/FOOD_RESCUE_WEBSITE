@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Available Donations - FoodRescue</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7f5;
+        }
+
+        .header {
+            background: #2e7d32;
+            color: white;
+            padding: 18px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            margin: 0;
+        }
+
+        .back-btn {
+            background: white;
+            color: #2e7d32;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        .container > h1 {
+            color: #2e7d32;
+        }
+
+        .donation-card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .donation-card h2 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+
+        .details {
+            line-height: 1.9;
+            color: #555;
+        }
+
+        .details strong {
+            color: #333;
+        }
+
+        .accept-btn {
+            margin-top: 15px;
+            padding: 12px 22px;
+
+            background: #2e7d32;
+            color: white;
+
+            border: none;
+            border-radius: 6px;
+
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .accept-btn:hover {
+            background: #1b5e20;
+        }
+
+        .accept-btn:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .success {
+            background: #dff5e1;
+            color: #2e7d32;
+        }
+
+        .error {
+            background: #fde2e2;
+            color: #c62828;
+        }
+
+        .empty {
+            background: white;
+            padding: 35px;
+            text-align: center;
+            border-radius: 10px;
+            color: #777;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h2>🍃 FoodRescue</h2>
+
+        <button
+            class="back-btn"
+            onclick="goDashboard()">
+
+            Dashboard
+
+        </button>
+
+    </div>
+
+
+    <!-- MAIN -->
+
+    <div class="container">
+
+        <h1>🍱 Available Food Donations</h1>
+
+        <p>
+            Food donations available for you to accept.
+        </p>
+
+
+        <!-- MESSAGE -->
+
+        <div
+            id="message"
+            class="message">
+        </div>
+
+
+        <!-- DONATIONS -->
+
+        <div id="donationsContainer">
+
+            <div class="empty">
+
+                Loading donations...
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+
+        // ==========================================
+        // GET TOKEN
+        // ==========================================
+
+        const token =
+            localStorage.getItem("token");
+
+
+        // ==========================================
+        // CHECK LOGIN
+        // ==========================================
+
+        if (!token) {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        // ==========================================
+        // LOAD AVAILABLE DONATIONS
+        // ==========================================
+
+        async function loadDonations() {
+
+            const container =
+                document.getElementById(
+                    "donationsContainer"
+                );
+
+            try {
+
+                const response =
+                    await fetch(
+                        "http://localhost:5000/api/donations/available",
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "Authorization":
+                                    "Bearer " + token
+                            }
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                // SERVER ERROR
+
+                if (!response.ok) {
+
+                    container.innerHTML =
+                        `
+                        <div class="empty">
+
+                            ${result.message ||
+                            "Unable to load donations."}
+
+                        </div>
+                        `;
+
+                    return;
+
+                }
+
+
+                // NO DONATIONS
+
+                if (
+                    !Array.isArray(result) ||
+                    result.length === 0
+                ) {
+
+                    container.innerHTML =
+                        `
+                        <div class="empty">
+
+                            <h3>No donations available</h3>
+
+                            <p>
+                                Please check again later.
+                            </p>
+
+                        </div>
+                        `;
+
+                    return;
+
+                }
+
+
+                // CLEAR CONTAINER
+
+                container.innerHTML = "";
+
+
+                // DISPLAY EACH DONATION
+
+                result.forEach(function(donation) {
+
+
+                    const card =
+                        document.createElement("div");
+
+
+                    card.className =
+                        "donation-card";
+
+
+                    card.innerHTML = `
+
+                        <h2>
+                            🍱 ${donation.foodName}
+                        </h2>
+
+                        <div class="details">
+
+                            <strong>Food Type:</strong>
+                            ${donation.foodType}
+
+                            <br>
+
+                            <strong>Quantity:</strong>
+                            ${donation.quantity}
+
+                            <br>
+
+                            <strong>Area:</strong>
+                            ${donation.area}
+
+                            <br>
+
+                            <strong>
+                                Safe Consumption Time:
+                            </strong>
+
+                            ${formatDate(
+                                donation.safeConsumptionTime
+                            )}
+
+                            <br>
+
+                            <strong>
+                                Pickup Deadline:
+                            </strong>
+
+                            ${formatDate(
+                                donation.pickupDeadline
+                            )}
+
+                            <br>
+
+                            <strong>
+                                Description:
+                            </strong>
+
+                            ${donation.description ||
+                            "No description"}
+
+                        </div>
+
+                        <button
+                            class="accept-btn"
+                            onclick="
+                                acceptDonation(
+                                    '${donation._id}',
+                                    this
+                                )
+                            ">
+
+                            Accept Donation
+
+                        </button>
+
+                    `;
+
+
+                    container.appendChild(card);
+
+                });
+
+            }
+
+
+            catch (error) {
+
+                console.error(error);
+
+                container.innerHTML =
+                    `
+                    <div class="empty">
+
+                        Cannot connect to server.
+
+                        <br><br>
+
+                        Make sure the backend is running.
+
+                    </div>
+                    `;
+
+            }
+
+        }
+
+
+        // ==========================================
+        // ACCEPT DONATION
+        // ==========================================
+
+        async function acceptDonation(
+            donationId,
+            button
+        ) {
+
+
+            // Disable button
+
+            button.disabled = true;
+
+            button.innerText =
+                "Accepting...";
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+
+                        "http://localhost:5000/api/donations/"
+                        + donationId
+                        + "/accept",
+
+                        {
+                            method: "POST",
+
+                            headers: {
+
+                                "Authorization":
+                                    "Bearer " + token,
+
+                                "Content-Type":
+                                    "application/json"
+
+                            }
+
+                        }
+
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                // ==================================
+                // SUCCESS
+                // ==================================
+
+                if (response.ok) {
+
+
+                    showMessage(
+                        "✅ " +
+                        result.message,
+                        "success"
+                    );
+
+
+                    // Reload list
+
+                    setTimeout(
+                        function() {
+
+                            loadDonations();
+
+                        },
+                        1000
+                    );
+
+                }
+
+
+                // ==================================
+                // ERROR
+                // ==================================
+
+                else {
+
+
+                    showMessage(
+                        "❌ " +
+                        (
+                            result.message ||
+                            "Donation could not be accepted."
+                        ),
+                        "error"
+                    );
+
+
+                    button.disabled = false;
+
+                    button.innerText =
+                        "Accept Donation";
+
+                }
+
+            }
+
+
+            catch (error) {
+
+
+                console.error(error);
+
+
+                showMessage(
+                    "❌ Cannot connect to server.",
+                    "error"
+                );
+
+
+                button.disabled = false;
+
+                button.innerText =
+                    "Accept Donation";
+
+            }
+
+        }
+
+
+        // ==========================================
+        // SHOW MESSAGE
+        // ==========================================
+
+        function showMessage(
+            text,
+            type
+        ) {
+
+            const message =
+                document.getElementById(
+                    "message"
+                );
+
+
+            message.innerText =
+                text;
+
+
+            message.className =
+                "message " + type;
+
+
+            message.style.display =
+                "block";
+
+
+            window.scrollTo(
+                {
+                    top: 0,
+                    behavior: "smooth"
+                }
+            );
+
+        }
+
+
+        // ==========================================
+        // FORMAT DATE
+        // ==========================================
+
+        function formatDate(date) {
+
+            if (!date) {
+
+                return "Not specified";
+
+            }
+
+
+            return new Date(date)
+                .toLocaleString();
+
+        }
+
+
+        // ==========================================
+        // GO TO RECEIVER DASHBOARD
+        // ==========================================
+
+        function goDashboard() {
+
+            window.location.href =
+                "receiver-dashboard.html";
+
+        }
+
+
+        // ==========================================
+        // START
+        // ==========================================
+
+        loadDonations();
+
+
+    </script>
+
+
+</body>
+
+</html>

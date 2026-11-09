@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>My Donations - FoodRescue</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7f5;
+        }
+
+        .header {
+            background: #2e7d32;
+            color: white;
+            padding: 18px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            margin: 0;
+        }
+
+        .back {
+            background: white;
+            color: #2e7d32;
+
+            border: none;
+            padding: 10px 18px;
+
+            border-radius: 6px;
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        h2 {
+            color: #2e7d32;
+        }
+
+        .donation-card {
+
+            background: white;
+
+            padding: 20px;
+
+            margin-bottom: 20px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .donation-card h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+
+        .details {
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .status {
+
+            display: inline-block;
+
+            padding: 6px 12px;
+
+            border-radius: 20px;
+
+            background: #e8f5e9;
+
+            color: #2e7d32;
+
+            font-weight: bold;
+        }
+
+        .empty {
+
+            background: white;
+
+            padding: 30px;
+
+            text-align: center;
+
+            border-radius: 10px;
+
+            color: #777;
+        }
+
+        .loading {
+            text-align: center;
+            color: #555;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="header">
+
+        <h2>🍃 FoodRescue</h2>
+
+        <button
+            class="back"
+            onclick="goDashboard()">
+
+            Dashboard
+
+        </button>
+
+    </div>
+
+
+
+    <div class="container">
+
+        <h2>📋 My Donations</h2>
+
+        <p>
+            Here you can view all the food donations you have posted.
+        </p>
+
+
+        <div id="donationsContainer">
+
+            <p class="loading">
+                Loading donations...
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+
+        // GET TOKEN
+
+        const token =
+            localStorage.getItem("token");
+
+
+        // CHECK LOGIN
+
+        if (!token) {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        // LOAD DONATIONS
+
+        async function loadDonations() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "http://localhost:5000/api/donations/my",
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "Authorization":
+                                    "Bearer " + token
+                            }
+                        }
+                    );
+
+
+                const donations =
+                    await response.json();
+
+
+                const container =
+                    document.getElementById(
+                        "donationsContainer"
+                    );
+
+
+                // ERROR
+
+                if (!response.ok) {
+
+                    container.innerHTML =
+                        `<div class="empty">
+                            ${donations.message ||
+                            "Unable to load donations."}
+                        </div>`;
+
+                    return;
+
+                }
+
+
+                // NO DONATIONS
+
+                if (donations.length === 0) {
+
+                    container.innerHTML =
+                        `<div class="empty">
+
+                            <h3>No donations yet</h3>
+
+                            <p>
+                                You have not posted any food donations.
+                            </p>
+
+                        </div>`;
+
+                    return;
+
+                }
+
+
+                // DISPLAY DONATIONS
+
+                container.innerHTML = "";
+
+
+                donations.forEach(function(donation) {
+
+
+                    const card =
+                        document.createElement("div");
+
+                    card.className =
+                        "donation-card";
+
+
+                    card.innerHTML = `
+
+                        <h3>
+                            🍱 ${donation.foodName}
+                        </h3>
+
+                        <div class="details">
+
+                            <strong>Food Type:</strong>
+                            ${donation.foodType}
+
+                            <br>
+
+                            <strong>Quantity:</strong>
+                            ${donation.quantity}
+
+                            <br>
+
+                            <strong>Area:</strong>
+                            ${donation.area}
+
+                            <br>
+
+                            <strong>Safe Consumption:</strong>
+                            ${formatDate(
+                                donation.safeConsumptionTime
+                            )}
+
+                            <br>
+
+                            <strong>Pickup Deadline:</strong>
+                            ${formatDate(
+                                donation.pickupDeadline
+                            )}
+
+                            <br>
+
+                            <strong>Description:</strong>
+                            ${donation.description || "No description"}
+
+                            <br><br>
+
+                            <strong>Status:</strong>
+
+                            <span class="status">
+                                ${donation.status}
+                            </span>
+
+                        </div>
+
+                    `;
+
+
+                    container.appendChild(card);
+
+                });
+
+            }
+
+
+            catch (error) {
+
+                document.getElementById(
+                    "donationsContainer"
+                ).innerHTML =
+
+                    `<div class="empty">
+
+                        Cannot connect to server.
+
+                    </div>`;
+
+            }
+
+        }
+
+
+
+        // FORMAT DATE
+
+        function formatDate(date) {
+
+            if (!date) {
+                return "Not specified";
+            }
+
+            return new Date(date)
+                .toLocaleString();
+
+        }
+
+
+
+        // DASHBOARD
+
+        function goDashboard() {
+
+            window.location.href =
+                "dashboard.html";
+
+        }
+
+
+
+        // LOAD DATA
+
+        loadDonations();
+
+
+    </script>
+
+
+</body>
+
+</html>

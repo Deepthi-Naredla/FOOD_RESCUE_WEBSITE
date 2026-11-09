@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>FoodRescue - Add Role</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7f6;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            min-height: 100vh;
+        }
+
+        .box {
+            width: 400px;
+            max-width: 90%;
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.12);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #198754;
+        }
+
+        p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 8px;
+
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+
+            padding: 12px;
+
+            border: 1px solid #ccc;
+            border-radius: 6px;
+
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+
+            padding: 12px;
+
+            margin-top: 20px;
+
+            background: #198754;
+            color: white;
+
+            border: none;
+            border-radius: 6px;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #157347;
+        }
+
+        #message {
+            margin-top: 15px;
+
+            padding: 10px;
+
+            border-radius: 6px;
+
+            display: none;
+        }
+
+        .back {
+            display: block;
+
+            margin-top: 20px;
+
+            text-align: center;
+
+            color: #198754;
+
+            text-decoration: none;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="box">
+
+    <h2>
+        Add Another Role
+    </h2>
+
+    <p>
+        You can use the same FoodRescue
+        account for multiple roles.
+    </p>
+
+
+    <label for="role">
+        Select Role
+    </label>
+
+
+    <select id="role">
+
+        <option value="receiver">
+            Receiver
+        </option>
+
+        <option value="volunteer">
+            Volunteer
+        </option>
+
+    </select>
+
+
+    <button onclick="addRole()">
+
+        Add Role
+
+    </button>
+
+
+    <div id="message"></div>
+
+
+    <a
+        href="dashboard.html"
+        class="back"
+    >
+        Back to Dashboard
+    </a>
+
+</div>
+
+
+
+<script>
+
+
+// Get login token
+
+const token =
+    localStorage.getItem("token");
+
+
+// If user is not logged in,
+// send them to login page
+
+if (!token) {
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+
+// Add selected role
+
+async function addRole() {
+
+    const role =
+        document.getElementById(
+            "role"
+        ).value;
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.style.display =
+        "block";
+
+    message.style.color =
+        "#333";
+
+    message.style.background =
+        "#f8f9fa";
+
+    message.textContent =
+        "Adding role...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:5000/api/auth/add-role",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    },
+
+                    body: JSON.stringify({
+
+                        role: role
+
+                    })
+
+                }
+            );
+
+
+        // Get response as text first
+
+        const responseText =
+            await response.text();
+
+
+        console.log(
+            "Server response:",
+            responseText
+        );
+
+
+        // Convert JSON response
+
+        let result;
+
+
+        try {
+
+            result =
+                JSON.parse(
+                    responseText
+                );
+
+        }
+        catch (jsonError) {
+
+            throw new Error(
+                "Server returned an invalid response. Please check that the backend is running on port 5000."
+            );
+
+        }
+
+
+        // Check API error
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                "Failed to add role"
+            );
+
+        }
+
+
+        // Update localStorage user
+
+        const storedUser =
+            localStorage.getItem(
+                "user"
+            );
+
+
+        if (storedUser) {
+
+            const user =
+                JSON.parse(
+                    storedUser
+                );
+
+
+            user.roles =
+                result.roles;
+
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(
+                    user
+                )
+            );
+
+        }
+
+
+        // Success message
+
+        message.style.color =
+            "#198754";
+
+        message.style.background =
+            "#d1e7dd";
+
+        message.textContent =
+            "Role added successfully!";
+
+
+        console.log(
+            "Updated roles:",
+            result.roles
+        );
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "Add role error:",
+            error
+        );
+
+
+        message.style.color =
+            "#dc3545";
+
+        message.style.background =
+            "#f8d7da";
+
+        message.textContent =
+            error.message;
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>

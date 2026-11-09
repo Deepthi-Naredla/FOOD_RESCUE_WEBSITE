@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Receiver Dashboard - FoodRescue</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7f5;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: #2e7d32;
+            color: white;
+
+            padding: 18px 35px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .logout {
+            background: white;
+            color: #2e7d32;
+
+            border: none;
+
+            padding: 10px 18px;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+
+        /* MAIN */
+
+        .container {
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding: 30px;
+        }
+
+
+        /* WELCOME */
+
+        .welcome {
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 12px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .welcome h2 {
+            color: #2e7d32;
+
+            margin-top: 0;
+        }
+
+        .welcome p {
+            color: #555;
+        }
+
+
+        /* CARDS */
+
+        .cards {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(230px, 1fr));
+
+            gap: 20px;
+        }
+
+
+        .card {
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 2px 8px rgba(0,0,0,0.08);
+        }
+
+
+        .icon {
+            font-size: 38px;
+        }
+
+
+        .card h3 {
+            color: #2e7d32;
+        }
+
+
+        .card p {
+            color: #666;
+
+            min-height: 45px;
+
+            line-height: 1.5;
+        }
+
+
+        /* BUTTON */
+
+        .btn {
+
+            width: 100%;
+
+            padding: 11px;
+
+            background: #2e7d32;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+
+        .btn:hover {
+            background: #1b5e20;
+        }
+
+
+        /* FOOTER */
+
+        .footer {
+
+            text-align: center;
+
+            color: #777;
+
+            padding: 25px;
+
+            margin-top: 30px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="logo">
+            🍃 FoodRescue
+        </div>
+
+        <button
+            class="logout"
+            onclick="logout()">
+
+            Logout
+
+        </button>
+
+    </div>
+
+
+
+    <!-- MAIN -->
+
+    <div class="container">
+
+
+        <!-- WELCOME -->
+
+        <div class="welcome">
+
+            <h2>
+
+                Welcome,
+                <span id="userName"></span>
+                👋
+
+            </h2>
+
+
+            <p>
+
+                <strong>Role:</strong>
+
+                <span id="userRole"></span>
+
+            </p>
+
+
+            <p>
+
+                <strong>Area:</strong>
+
+                <span id="userArea"></span>
+
+            </p>
+
+        </div>
+
+
+
+        <!-- RECEIVER CARDS -->
+
+        <div class="cards">
+
+
+            <!-- AVAILABLE FOOD -->
+
+            <div class="card">
+
+                <div class="icon">
+                    🍱
+                </div>
+
+                <h3>
+                    Available Food
+                </h3>
+
+                <p>
+
+                    View surplus food donations
+                    available for your organization.
+
+                </p>
+
+                <button
+                    class="btn"
+                    onclick="availableFood()">
+
+                    View Available Food
+
+                </button>
+
+            </div>
+
+
+
+            <!-- MY ACCEPTED DONATIONS -->
+
+            <div class="card">
+
+                <div class="icon">
+                    📋
+                </div>
+
+                <h3>
+                    My Accepted Food
+                </h3>
+
+                <p>
+
+                    View food donations that
+                    you have accepted.
+
+                </p>
+
+                <button
+                    class="btn"
+                    onclick="acceptedFood()">
+
+                    View Accepted Food
+
+                </button>
+
+            </div>
+
+
+
+            <!-- NOTIFICATIONS -->
+
+            <div class="card">
+
+                <div class="icon">
+                    🔔
+                </div>
+
+                <h3>
+                    Notifications
+                </h3>
+
+                <p>
+
+                    View notifications about
+                    available food donations.
+
+                </p>
+
+                <button
+                    class="btn"
+                    onclick="notifications()">
+
+                    Notifications
+
+                </button>
+
+            </div>
+
+
+
+            <!-- HISTORY -->
+
+            <div class="card">
+
+                <div class="icon">
+                    📊
+                </div>
+
+                <h3>
+                    History
+                </h3>
+
+                <p>
+
+                    View your previous
+                    food collection activities.
+
+                </p>
+
+                <button
+                    class="btn"
+                    onclick="historyPage()">
+
+                    View History
+
+                </button>
+
+            </div>
+
+
+
+            <!-- COMPLAINTS -->
+
+            <div class="card">
+
+                <div class="icon">
+                    📞
+                </div>
+
+                <h3>
+                    Complaints
+                </h3>
+
+                <p>
+
+                    Submit and track
+                    your complaints.
+
+                </p>
+
+                <button
+                    class="btn"
+                    onclick="complaints()">
+
+                    Complaints
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        FoodRescue © 2026
+
+        <br>
+
+        Connecting surplus food with people in need.
+
+    </div>
+
+
+
+    <script>
+
+
+        // GET USER
+
+        const user =
+            JSON.parse(
+                localStorage.getItem("user")
+            );
+
+
+        // CHECK LOGIN
+
+        if (!user) {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+        else {
+
+            document.getElementById(
+                "userName"
+            ).innerText =
+                user.name;
+
+
+            document.getElementById(
+                "userRole"
+            ).innerText =
+                user.role;
+
+
+            document.getElementById(
+                "userArea"
+            ).innerText =
+                user.area ||
+                "Not specified";
+
+        }
+
+
+
+        // AVAILABLE FOOD
+
+        function availableFood() {
+
+            window.location.href =
+                "available-donations.html";
+
+        }
+
+
+
+        // ACCEPTED FOOD
+
+        function acceptedFood() {
+
+            alert(
+                "Accepted Food page will be added next."
+            );
+
+        }
+
+
+
+        // NOTIFICATIONS
+
+        function notifications() {
+
+            alert(
+                "Notifications page will be added next."
+            );
+
+        }
+
+
+
+        // HISTORY
+
+        function historyPage() {
+
+            alert(
+                "History page will be added next."
+            );
+
+        }
+
+
+
+        // COMPLAINTS
+
+        function complaints() {
+
+            alert(
+                "Complaints page will be added next."
+            );
+
+        }
+
+
+
+        // LOGOUT
+
+        function logout() {
+
+            localStorage.removeItem("token");
+
+            localStorage.removeItem("user");
+
+            window.location.href =
+                "login.html";
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

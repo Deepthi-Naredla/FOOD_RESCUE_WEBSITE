@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post Food Donation - FoodRescue</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+        }
+
+        .header {
+            background: #2e7d32;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            width: 500px;
+            max-width: 90%;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: #2e7d32;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 80px;
+        }
+
+        .radio-option {
+            margin-top: 10px;
+        }
+
+        .radio-option input {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .radio-option label {
+            display: inline;
+            margin: 0;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h2>FoodRescue</h2>
+    </div>
+
+    <div class="container">
+
+        <h2>Post Food Donation</h2>
+
+        <form id="donationForm">
+
+            <label>Food Name</label>
+            <input
+                type="text"
+                id="foodName"
+                placeholder="Example: Rice and Curry"
+                required
+            >
+
+            <label>Food Type</label>
+            <select id="foodType" required>
+                <option value="">Select</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Non-Vegetarian">Non-Vegetarian</option>
+            </select>
+
+            <label>Quantity</label>
+            <input
+                type="number"
+                id="quantity"
+                min="1"
+                placeholder="Example: 50"
+                required
+            >
+
+            <label>Area</label>
+            <input
+                type="text"
+                id="area"
+                placeholder="Example: Hanamkonda"
+                required
+            >
+
+            <label>Safe Consumption Time</label>
+            <input
+                type="datetime-local"
+                id="safeConsumptionTime"
+                required
+            >
+
+            <label>Pickup Deadline</label>
+            <input
+                type="datetime-local"
+                id="pickupDeadline"
+                required
+            >
+
+            <label>Description</label>
+            <textarea
+                id="description"
+                placeholder="Enter food details"
+            ></textarea>
+
+
+            <!-- DELIVERY OPTION -->
+
+            <label>How will the food be delivered?</label>
+
+            <div class="radio-option">
+                <input
+                    type="radio"
+                    id="volunteerPickup"
+                    name="pickupOption"
+                    value="VOLUNTEER_PICKUP"
+                    required
+                >
+
+                <label for="volunteerPickup">
+                    Volunteer will pick up
+                </label>
+            </div>
+
+
+            <div class="radio-option">
+                <input
+                    type="radio"
+                    id="donorDelivery"
+                    name="pickupOption"
+                    value="DONOR_DELIVERY"
+                >
+
+                <label for="donorDelivery">
+                    I will deliver it myself
+                </label>
+            </div>
+
+
+            <button type="submit">
+                Post Donation
+            </button>
+
+        </form>
+
+        <p id="message"></p>
+
+    </div>
+
+
+    <script>
+
+        document.getElementById("donationForm")
+            .addEventListener("submit", async function(event) {
+
+                event.preventDefault();
+
+
+                const token =
+                    localStorage.getItem("token");
+
+                const user =
+                    JSON.parse(
+                        localStorage.getItem("user")
+                    );
+
+
+                if (!token || !user) {
+
+                    document.getElementById("message").innerText =
+                        "Please login first.";
+
+                    return;
+                }
+
+
+                const donationData = {
+
+                    foodName:
+                        document.getElementById("foodName").value,
+
+                    foodType:
+                        document.getElementById("foodType").value,
+
+                    quantity:
+                        Number(
+                            document.getElementById("quantity").value
+                        ),
+
+                    area:
+                        document.getElementById("area").value,
+
+                    safeConsumptionTime:
+                        document.getElementById(
+                            "safeConsumptionTime"
+                        ).value,
+
+                    pickupDeadline:
+                        document.getElementById(
+                            "pickupDeadline"
+                        ).value,
+
+                    description:
+                        document.getElementById(
+                            "description"
+                        ).value,
+
+                    pickupOption:
+                        document.querySelector(
+                            'input[name="pickupOption"]:checked'
+                        ).value
+
+                };
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "http://localhost:5000/api/donations",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "Authorization":
+                                        "Bearer " + token
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        donationData
+                                    )
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (response.ok) {
+
+                        document.getElementById(
+                            "message"
+                        ).innerText =
+                            "Donation posted successfully!";
+
+                        document.getElementById(
+                            "donationForm"
+                        ).reset();
+
+                    }
+
+                    else {
+
+                        document.getElementById(
+                            "message"
+                        ).innerText =
+                            result.message ||
+                            "Donation failed.";
+
+                    }
+
+                }
+
+                catch (error) {
+
+                    console.error(error);
+
+                    document.getElementById(
+                        "message"
+                    ).innerText =
+                        "Cannot connect to server.";
+
+                }
+
+            });
+
+    </script>
+
+</body>
+</html>

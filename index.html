@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>FoodRescue</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7f5;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            background: #2e7d32;
+            color: white;
+
+            padding: 18px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .nav-buttons button {
+            padding: 10px 18px;
+            margin-left: 10px;
+
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .login {
+            background: white;
+            color: #2e7d32;
+            border: none;
+        }
+
+        .register {
+            background: transparent;
+            color: white;
+            border: 1px solid white;
+        }
+
+
+        /* HERO */
+
+        .hero {
+            text-align: center;
+
+            padding: 90px 20px;
+
+            background: white;
+        }
+
+        .hero h1 {
+            font-size: 45px;
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 19px;
+            color: #555;
+
+            max-width: 650px;
+            margin: auto;
+
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            margin-top: 30px;
+        }
+
+        .hero-buttons button {
+            padding: 13px 25px;
+            margin: 8px;
+
+            border-radius: 7px;
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+        .start {
+            background: #2e7d32;
+            color: white;
+            border: none;
+        }
+
+        .join {
+            background: white;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+        }
+
+
+        /* FEATURES */
+
+        .features {
+            padding: 50px 30px;
+            text-align: center;
+        }
+
+        .features h2 {
+            color: #2e7d32;
+        }
+
+        .cards {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+
+            flex-wrap: wrap;
+
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+
+            width: 250px;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card .icon {
+            font-size: 35px;
+        }
+
+        .card h3 {
+            color: #2e7d32;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+
+        /* FOOTER */
+
+        footer {
+            background: #2e7d32;
+            color: white;
+
+            text-align: center;
+
+            padding: 20px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVBAR -->
+
+    <div class="navbar">
+
+        <div class="logo">
+            🍃 FoodRescue
+        </div>
+
+        <div class="nav-buttons">
+
+            <button
+                class="login"
+                onclick="signIn()">
+
+                Sign In
+
+            </button>
+
+            <button
+                class="register"
+                onclick="signUp()">
+
+                Sign Up
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <h1>
+            Reduce Food Waste. Feed Someone in Need.
+        </h1>
+
+        <p>
+
+            FoodRescue connects surplus food donors
+            with NGOs, shelters and other receivers
+            to reduce food waste and help communities.
+
+        </p>
+
+
+        <div class="hero-buttons">
+
+            <button
+                class="start"
+                onclick="signIn()">
+
+                Sign In
+
+            </button>
+
+
+            <button
+                class="join"
+                onclick="signUp()">
+
+                Create Account
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- FEATURES -->
+
+    <section class="features">
+
+        <h2>
+            How FoodRescue Helps
+        </h2>
+
+
+        <div class="cards">
+
+
+            <div class="card">
+
+                <div class="icon">
+                    🍱
+                </div>
+
+                <h3>
+                    Donate Food
+                </h3>
+
+                <p>
+                    Donors can post surplus food
+                    before it goes to waste.
+                </p>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <div class="icon">
+                    🤝
+                </div>
+
+                <h3>
+                    Connect
+                </h3>
+
+                <p>
+                    Food donations are connected
+                    with suitable receivers.
+                </p>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <div class="icon">
+                    🚚
+                </div>
+
+                <h3>
+                    Deliver
+                </h3>
+
+                <p>
+                    Volunteers help collect and
+                    deliver donated food.
+                </p>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <div class="icon">
+                    ❤️
+                </div>
+
+                <h3>
+                    Make an Impact
+                </h3>
+
+                <p>
+                    Reduce food waste and help
+                    people in need.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        FoodRescue © 2026
+        <br>
+        Reducing food waste, serving communities.
+
+    </footer>
+
+
+
+    <script>
+
+        function signIn() {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        function signUp() {
+
+            window.location.href =
+                "register.html";
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Dashboard - FoodRescue</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7f5;
+        }
+
+        header {
+            background: #198754;
+            color: white;
+            padding: 20px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ddd;
+        }
+
+        .card h3 {
+            color: #198754;
+            margin-bottom: 12px;
+        }
+
+        .task {
+            background: white;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ddd;
+        }
+
+        button {
+            background: #198754;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        button:hover {
+            background: #126b40;
+        }
+
+        .status {
+            color: #198754;
+            font-weight: bold;
+        }
+
+        .logout {
+            background: white;
+            color: #198754;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2>FoodRescue - Volunteer</h2>
+    <button class="logout" onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+    <div class="welcome">
+        <h2>Welcome, Volunteer!</h2>
+        <p>Help deliver surplus food to people in need.</p>
+    </div>
+
+    <div class="stats">
+        <div class="card">
+            <h3>Total Deliveries</h3>
+            <h2 id="total">0</h2>
+        </div>
+
+        <div class="card">
+            <h3>Pending Tasks</h3>
+            <h2 id="pending">2</h2>
+        </div>
+
+        <div class="card">
+            <h3>Completed Tasks</h3>
+            <h2 id="completed">0</h2>
+        </div>
+    </div>
+
+    <h2>Available Pickup Tasks</h2>
+
+    <div class="task">
+        <h3>Food Pickup #001</h3>
+        <p><b>Donor:</b> ABC Restaurant</p>
+        <p><b>Pickup Area:</b> Hanamkonda</p>
+        <p><b>Food:</b> 30 Meals</p>
+        <p><b>Delivery:</b> Nearby Orphanage</p>
+        <p>Status: <span class="status" id="status1">Available</span></p>
+        <button onclick="acceptTask(1)">Accept Task</button>
+    </div>
+
+    <div class="task">
+        <h3>Food Pickup #002</h3>
+        <p><b>Donor:</b> XYZ Hotel</p>
+        <p><b>Pickup Area:</b> Warangal</p>
+        <p><b>Food:</b> 20 Meals</p>
+        <p><b>Delivery:</b> Old Age Home</p>
+        <p>Status: <span class="status" id="status2">Available</span></p>
+        <button onclick="acceptTask(2)">Accept Task</button>
+    </div>
+
+</div>
+
+<script>
+    let completed = 0;
+    let total = 0;
+
+    function acceptTask(id) {
+        const status = document.getElementById("status" + id);
+
+        if (status.innerText !== "Available") {
+            return;
+        }
+
+        status.innerText = "Accepted";
+        total++;
+
+        document.getElementById("total").innerText = total;
+        document.getElementById("pending").innerText = 2 - total;
+
+        alert("Pickup task accepted successfully!");
+    }
+
+    function logout() {
+        window.location.href = "index.html";
+    }
+</script>
+
+</body>
+</html>
